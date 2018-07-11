@@ -49,6 +49,20 @@ sudo service elasticsearch status
 - Open your browser
 - Go on the following URL
 
+
+# Chapter II: Configure your elasticsearch service
+
+## Reminder
+In Linux/Debian environments, the configuration files are in:
+`/etc/elasticsearch/`
+
+To know where are stored the log files and the data, you can open elasticsearch.yml.
+By default, these files are respectively in `/var/log/elasticsearch` and in `/var/lib/elasticsearch/`
+
+##
+The official documentation is available at https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html
+
+
 # Chapter V: Appendices
 
 ## Markdown syntax
