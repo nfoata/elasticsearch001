@@ -102,6 +102,48 @@ health status index uuid pri rep docs.count docs.deleted store.size pri.store.si
 ```
 
 NB: This last line means there is no index within elasticsearch for now
+https://www.elastic.co/guide/en/elasticsearch/reference/current/_list_all_indices.html
+
+# Chapter III: Play with elasticsearch
+https://www.elastic.co/guide/en/elasticsearch/reference/6.3/indices-create-index.html
+
+## Make your first index
+When you build your index, you can fix the number of shard and replicas
+
+```
+curl -X PUT http://localhost:9200/myfirstindex
+{
+    "settings" : {
+        "index" : {
+            "number_of_shards" : 5, 
+            "number_of_replicas" : 1 
+        }
+    }
+}
+```
+
+Warnings:
+- The index name must be in lower case
+- You have to use PUT and not POST http verb
+
+After or having information on your index, you can directly make the following request:
+```
+curl -X GET http://localhost:9200/myfirstindex/_settings
+```
+
+Moreover, if you ask again what are the available indices on elasticsearch server, now you will have one:
+
+```
+curl -X GET http://localhost:9200/_cat/indices?v
+
+health status index        uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+yellow open   myfirstindex QZj3F6eqQriKXS6tY2SIXg   5   1          0            0      1.2kb          1.2kb
+```
+
+## Make a second index and specify the mapping
+
+## Make a third index and specify also some aliases
+
 
 # Chapter V: Appendices
 
