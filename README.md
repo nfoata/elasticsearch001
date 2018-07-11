@@ -105,9 +105,18 @@ NB: This last line means there is no index within elasticsearch for now
 https://www.elastic.co/guide/en/elasticsearch/reference/current/_list_all_indices.html
 
 # Chapter III: Play with elasticsearch
-https://www.elastic.co/guide/en/elasticsearch/reference/6.3/indices-create-index.html
+
+## Introduction
+
+** Index ** : An index can be seen as a database with its rules for the replication, shards ... e.g: a shop
+** Type **: A type can be seen as a table. e.g: the DVDs in a shop, the books in a shop
+** Alias **: An alias is another name of an index or can be also a pre configured filter accessible via this new name (a kind of another view)
+
 
 ## Make your first index
+
+The official documenation for the indices https://www.elastic.co/guide/en/elasticsearch/reference/6.3/indices-create-index.html
+
 When you build your index, you can fix the number of shard and replicas
 
 ```
