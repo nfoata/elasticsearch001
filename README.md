@@ -135,15 +135,15 @@ The official documenation for the indices https://www.elastic.co/guide/en/elasti
 When you build your index, you can fix the number of shard and replicas
 
 ```
-curl -X PUT http://localhost:9200/myfirstindex
-{                                        \
-    "settings" : {                       \
-        "index" : {                      \
-            "number_of_shards" : 5,      \
-            "number_of_replicas" : 1     \
-        }                                \
-    }                                    \
-}
+curl -X PUT -H 'Content-Type: application/json' http://localhost:9200/myfirstindex -d'
+{                                        
+    "settings" : {                       
+        "index" : {                      
+            "number_of_shards" : 5,      
+            "number_of_replicas" : 1     
+        }                                
+    }                                    
+}'
 ```
 
 Warnings:
@@ -167,7 +167,7 @@ yellow open   myfirstindex QZj3F6eqQriKXS6tY2SIXg   5   1          0            
 ## Make a second index and specify the mapping
 
 ```
-curl -X PUT http://localhost:9200/mysecondindex \
+curl -X PUT -H 'Content-Type: application/json' http://localhost:9200/mysecondindex -d'
 {
   "settings" : { 
     "index" : { 
@@ -182,11 +182,11 @@ curl -X PUT http://localhost:9200/mysecondindex \
       }                                           
     } 
   }
-}
+}'
 
-# curl -X PUT http://localhost:9200/mysecondindex {"settings":{"index":{"number_of_shards":3,"number_of_replicas":1}},"mappings":{"myfirsttype":{"properties":{"myfirstfield":{"type":"text"}}}}}
-# curl -X PUT http://localhost:9200/mysecondindex -D '{\"settings":{\"index\":{\"number_of_shards\":3,\"number_of_replicas\":1}},\"mappings":{\"myfirsttype\":{\"properties\":{\"myfirstfield\":{\"type\":\"text\"}}}}}'
-{"acknowledged":true,"shards_acknowledged":true,"index":"mysecondindex"}```
+# curl -X PUT -H 'Content-Type: application/json' http://localhost:9200/mysecondindex -d '{"settings":{"index":{"number_of_shards":3,"number_of_replicas":1}},"mappings":{"myfirsttype":{"properties":{"myfirstfield":{"type":"text"}}}}}'
+{"acknowledged":true,"shards_acknowledged":true,"index":"mysecondindex"}
+```
 
 NB:
 - If you make a mistake on your index, you can delete it as
