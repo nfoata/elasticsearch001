@@ -339,9 +339,11 @@ curl -X POST "localhost:9200/_aliases" -H 'Content-Type: application/json' -d'
     ]
 }
 '
+```
 
 or another way to do the same stuff
 
+```
 curl -X POST "localhost:9200/_aliases" -H 'Content-Type: application/json' -d'
 {
     "actions" : [
@@ -349,6 +351,7 @@ curl -X POST "localhost:9200/_aliases" -H 'Content-Type: application/json' -d'
     ]
 }
 '
+```
 
 After having put the `mycommonalias`, we can check that we have well the information for both of the indices
 ```
