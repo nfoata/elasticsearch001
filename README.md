@@ -372,7 +372,7 @@ curl -X GET "http://localhost:9200/mycommonalias/_mappings"
 {"myfirstindex":{"mappings":{}},"mysecondindex":{"mappings":{"myfirsttype":{"properties":{"myfirstfield":{"type":"text"}}}}}}
 ```
 
-### Insert documents
+### Create/Insert a document
 
 ```
 curl -X PUT -H 'Content-Type: application/json' http://localhost:9200/shop_index/dvd_type/1 -d '
@@ -387,7 +387,9 @@ curl -X PUT -H 'Content-Type: application/json' http://localhost:9200/shop_index
 {"_index":"shop_index","_type":"dvd_type","_id":"1","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"_seq_no":0,"_primary_term":1}
 ```
 
-As you can see, if you send a request with a no existing index and so with no type, elasticsearch will create them for adding the new document.
+As we can see, if you send a request with a no existing index and so with no type, elasticsearch will create them for adding the new document.
+Moreover, according the answer the document has been recorded with the _id = 1.
+
 
 Check what elasticsearch has done:
 1.0 The settings
@@ -403,6 +405,77 @@ curl -X GET http://localhost:9200/shop_index/_mappings
 
 {"shop_index":{"mappings":{"dvd_type":{"properties":{"director":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"genres":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"title":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"year":{"type":"long"}}}}}}
 ```
+
+Now, we will use the POST http verb normally used for creating (even if you have just seen that PUT for update was able to create new entry if they do not already exist)
+In that example, we have forced the _id of the document by passing it within the URL
+```
+curl -X POST  -H 'Content-Type: application/json' http://localhost:9200/shop_index/dvd_type/AVc-Cf49qZYpQV_XCKMq -d '
+
+{
+    "title": "Star Wars",
+    "director": "George Lucas",
+    "year": 1977,
+    "genres": ["Action", "Adventure", "Fantasy", "Sci-Fi"]
+} 
+'
+
+{"_index":"shop_index","_type":"dvd_type","_id":"AVc-Cf49qZYpQV_XCKMq","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"_seq_no":1,"_primary_term":1}
+```
+
+The JSON answer contains both with POST and PUT here, the **result** field with **created** given the document did not exist before.
+
+
+### Read/Retrieve a document
+
+For sure, if you know the _id of a document, you can find it straightforwardly as below:
+```
+curl -X GET http://localhost:9200/shop_index/dvd_type/1
+{"_index":"shop_index","_type":"dvd_type","_id":"1","_version":1,"found":true,"_source":
+{
+    "title": "The Godfather",
+    "director": "Francis Ford Coppola",
+    "year": 1972,
+    "genres": ["Crime", "Drama"]
+}}
+
+curl -X GET http://localhost:9200/shop_index/dvd_type/AVc-Cf49qZYpQV_XCKMq
+{"_index":"shop_index","_type":"dvd_type","_id":"AVc-Cf49qZYpQV_XCKMq","_version":1,"found":true,"_source":
+
+{
+    "title": "Star Wars",
+    "director": "George Lucas",
+    "year": 1977,
+    "genres": ["Action", "Adventure", "Fantasy", "Sci-Fi"]
+} 
+}
+```
+
+Really easy, isn\'t it ?
+
+However have you remark something ? 
+The outputs have the same end of line and blanks that we have used for creating them.
+So, use conventions and good practices for avoiding an unconsistent system.
+
+If you request a document which do not exist, you will have in return an http not found answer.
+e.g:
+```
+curl -i -X GET "http://localhost:9200/shop_index/dvd_type/19"
+
+HTTP/1.1 404 Not Found
+content-type: application/json; charset=UTF-8
+content-length: 67
+
+{"_index":"shop_index","_type":"dvd_type","_id":"19","found":false}
+```
+
+
+### Update a document
+
+
+
+
+### Delete a document
+
 
 - - -
 
