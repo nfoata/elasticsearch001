@@ -185,6 +185,7 @@ curl -X PUT http://localhost:9200/mysecondindex \
 }
 
 # curl -X PUT http://localhost:9200/mysecondindex {"settings":{"index":{"number_of_shards":3,"number_of_replicas":1}},"mappings":{"myfirsttype":{"properties":{"myfirstfield":{"type":"text"}}}}}
+# curl -X PUT http://localhost:9200/mysecondindex -D '{\"settings":{\"index\":{\"number_of_shards\":3,\"number_of_replicas\":1}},\"mappings":{\"myfirsttype\":{\"properties\":{\"myfirstfield\":{\"type\":\"text\"}}}}}'
 {"acknowledged":true,"shards_acknowledged":true,"index":"mysecondindex"}```
 
 NB:
@@ -200,15 +201,21 @@ Then you can check that:
 ```
 curl -X GET http://localhost:9200/_cat/indices?v
 
-
+health status index         uuid                   pri rep docs.count docs.deleted store.size pri.store.size
+yellow open   mysecondindex fkyFaOYcRBmyBRMQ11vheQ   3   1          0            0       690b           690b
+yellow open   myfirstindex  QZj3F6eqQriKXS6tY2SIXg   5   1          0            0      1.2kb          1.2kb
 ```
 2. the index named `mysecondindex` has the correct settings
 ```
 curl -X GET http://localhost:9200/mysecondindex/_settings
+
+{"mysecondindex":{"settings":{"index":{"creation_date":"1531386908605","number_of_shards":"3","number_of_replicas":"1","uuid":"fkyFaOYcRBmyBRMQ11vheQ","version":{"created":"6030199"},"provided_name":"mysecondindex"}}}}
 ```
 3. the index named `mysecondindex` has the correct mappings
 ```
 curl -X GET http://localhost:9200/mysecondindex/_mappings
+
+{"mysecondindex":{"mappings":{"myfirsttype":{"properties":{"myfirstfield":{"type":"text"}}}}}}
 ```
 
 
