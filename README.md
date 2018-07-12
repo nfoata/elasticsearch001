@@ -219,16 +219,82 @@ curl -X GET http://localhost:9200/mysecondindex/_mappings
 ```
 
 
-## Make a third index and specify also some aliases
+## Make on the first index some aliases
 The official documentation for aliases https://www.elastic.co/guide/en/elasticsearch/reference/6.3/indices-aliases.html
 
 ```
 curl -X GET http://localhost:9200/_aliases
 
-{"myfirstindex":{"aliases":{}}}
+{"mysecondindex":{"aliases":{}},"myfirstindex":{"aliases":{}}}
 ```
 
-As we can see, we do not have any alias.
+As we can see, we do not have any alias for both indices
+
+So, let's create our first alias on our first index
+```
+curl -X POST "localhost:9200/_aliases" -H 'Content-Type: application/json' -d '
+{
+    "actions" : [
+        { "add" : { "index" : "myfirstindex", "alias" : "myfirstalias" } }
+    ]
+}
+'
+
+{"acknowledged":true}
+```
+To verify that everything goes well:
+1. Redo a call to elasticsearch to see the current aliases
+```
+curl -X GET http://localhost:9200/_aliases
+
+{"mysecondindex":{"aliases":{}},"myfirstindex":{"aliases":{"myfirstalias":{}}}}
+```
+2. Make a call via to `myfirstindex` and via `myfirstalias` and compare the results
+```
+curl -X GET http://localhost:9200/myfirstindex
+
+{"myfirstindex":{"aliases":{"myfirstalias":{}},"mappings":{},"settings":{"index":{"creation_date":"1531317424617","number_of_shards":"5","number_of_replicas":"1","uuid":"QZj3F6eqQriKXS6tY2SIXg","version":{"created":"6030199"},"provided_name":"myfirstindex"}}}}
+
+curl -X GET http://localhost:9200/myfirstalias
+{"myfirstindex":{"aliases":{"myfirstalias":{}},"mappings":{},"settings":{"index":{"creation_date":"1531317424617","number_of_shards":"5","number_of_replicas":"1","uuid":"QZj3F6eqQriKXS6tY2SIXg","version":{"created":"6030199"},"provided_name":"myfirstindex"}}}}
+```
+
+For deleting an alias, it is reaaly simple.
+Indeed, you have only to use the term **delete** instead of **add** within the action property of the JSON body request.
+e.g:
+```
+curl -X POST "localhost:9200/_aliases" -H 'Content-Type: application/json' -d ' 
+{
+    "actions" : [
+        { "delete" : { "index" : "myfirstindex", "alias" : "myfirstalias" } }
+    ]
+}
+'
+
+But until now, we do not have yet see all the power of the aliases.
+Indeed, with aliases, it will be possible to regroup indices or to pre configured a filter.
+curl -X POST "localhost:9200/_aliases" -H 'Content-Type: application/json' -d'
+{
+    "actions" : [
+        { "add" : { "index" : "myfirstindex", "alias" : "mycommonalias" } },
+        { "add" : { "index" : "mysecondindex", "alias" : "mycommonalias" } }
+    ]
+}
+'
+
+or another way to do the same stuff
+
+curl -X POST "localhost:9200/_aliases" -H 'Content-Type: application/json' -d'
+{
+    "actions" : [
+        { "add" : { "indices" : ["myfirstindex", "mysecond*"], "alias" : "mycommonalias" } }
+    ]
+}
+'
+
+
+
+
 
 # Chapter V: Appendices
 
