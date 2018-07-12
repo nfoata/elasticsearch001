@@ -12,6 +12,15 @@ NB:
 The official website is https://www.elastic.co/fr/
 A french website for the installation https://doc.ubuntu-fr.org/elasticsearch
 
+## Optional: Install some tools for working with elasticsearch
+```
+\# For having the netstat comand and see the open ports on your server
+sudo apt-get install net-tools
+
+\# For having cURL and make manual http request 
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+```
+
 ## Install the debian package
 ```
 sudo dpkg -i elasticsearch-6.3.1.deb
@@ -108,10 +117,16 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/_list_all_indice
 
 ## Introduction
 
-** Index ** : An index can be seen as a database with its rules for the replication, shards ... e.g: a shop
-** Type **: A type can be seen as a table. e.g: the DVDs in a shop, the books in a shop
-** Alias **: An alias is another name of an index or can be also a pre configured filter accessible via this new name (a kind of another view)
+**Index**: An index can be seen as a database with its rules for the replication, shards ... 
+> e.g: a shop
 
+**Type**: A type can be seen as a table. 
+> e.g: the DVDs in a shop, the books in a shop
+
+**Alias**: An alias is another name of an index or can be also a pre configured filter accessible via this new name (a kind of another view)
+> e.g: The media which contains both DVDs and books 
+>      The DVDs with Leonardo DiCaprio (pre configurerd filtering on DVDs)
+>      The DVDs of USA = DVDs of North America (same name for accessing the same data)
 
 ## Make your first index
 
@@ -121,13 +136,13 @@ When you build your index, you can fix the number of shard and replicas
 
 ```
 curl -X PUT http://localhost:9200/myfirstindex
-{
-    "settings" : {
-        "index" : {
-            "number_of_shards" : 5, 
-            "number_of_replicas" : 1 
-        }
-    }
+{                                        \
+    "settings" : {                       \
+        "index" : {                      \
+            "number_of_shards" : 5,      \
+            "number_of_replicas" : 1     \
+        }                                \
+    }                                    \
 }
 ```
 
@@ -151,8 +166,62 @@ yellow open   myfirstindex QZj3F6eqQriKXS6tY2SIXg   5   1          0            
 
 ## Make a second index and specify the mapping
 
-## Make a third index and specify also some aliases
+```
+curl -X PUT http://localhost:9200/mysecondindex \
+{
+  "settings" : { 
+    "index" : { 
+      "number_of_shards" : 3, 
+      "number_of_replicas" : 1  
+    }  
+  },                                                                    
+  "mappings" : { 
+    "myfirsttype": {
+      "properties": {  
+        "myfirstfield": {"type":"text"}             
+      }                                           
+    } 
+  }
+}
 
+# curl -X PUT http://localhost:9200/mysecondindex {"settings":{"index":{"number_of_shards":3,"number_of_replicas":1}},"mappings":{"myfirsttype":{"properties":{"myfirstfield":{"type":"text"}}}}}
+{"acknowledged":true,"shards_acknowledged":true,"index":"mysecondindex"}```
+
+NB:
+- If you make a mistake on your index, you can delete it as
+```
+curl -X DELETE http://localhost:9200/mysecondindex
+
+{"acknowledged":true}
+```
+
+Then you can check that:
+1. elasticsearch has the new index named `mysecondindex` as previously
+```
+curl -X GET http://localhost:9200/_cat/indices?v
+
+
+```
+2. the index named `mysecondindex` has the correct settings
+```
+curl -X GET http://localhost:9200/mysecondindex/_settings
+```
+3. the index named `mysecondindex` has the correct mappings
+```
+curl -X GET http://localhost:9200/mysecondindex/_mappings
+```
+
+
+## Make a third index and specify also some aliases
+The official documentation for aliases https://www.elastic.co/guide/en/elasticsearch/reference/6.3/indices-aliases.html
+
+```
+curl -X GET http://localhost:9200/_aliases
+
+{"myfirstindex":{"aliases":{}}}
+```
+
+As we can see, we do not have any alias.
 
 # Chapter V: Appendices
 
