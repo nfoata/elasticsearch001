@@ -1,9 +1,13 @@
-# elasticsearch001
-Elasticsearch test
+Project: elasticsearch001
+=========================
 
-# Chapter I: Installation on ubuntu 18.04
+**Goal**: Learn how to install and work with Elasticsearch
 
-## Download the debian package from the official website
+
+Chapter I: Installation on ubuntu 18.04
+---------------------------------------
+
+### Download the debian package from the official website
 ```
 wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.3.1.deb
 ```
@@ -12,7 +16,7 @@ NB:
 The official website is https://www.elastic.co/fr/
 A french website for the installation https://doc.ubuntu-fr.org/elasticsearch
 
-## Optional: Install some tools for working with elasticsearch
+### Optional: Install some tools for working with elasticsearch
 ```
 \# For having the netstat comand and see the open ports on your server
 sudo apt-get install net-tools
@@ -21,12 +25,12 @@ sudo apt-get install net-tools
 sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
 ```
 
-## Install the debian package
+### Install the debian package
 ```
 sudo dpkg -i elasticsearch-6.3.1.deb
 ```
 
-## Check the package is well install and you can see also if there is other versions on you apt lists
+### Check the package is well install and you can see also if there is other versions on you apt lists
 ```
 sudo apt-cache policy elasticsearch
 ```
@@ -36,7 +40,7 @@ sudo apt-get install apt-show-versions
 sudo apt-show-versions elasticsearch
 ```
 
-## Check the services which are running on your ubuntu
+### Check the services which are running on your ubuntu
 ```
 service --status-all
 ```
@@ -44,24 +48,62 @@ service --status-all
 NB:
 The elasticsearch statius is not running normally
 
-## Start elasticsearch service
+### Start elasticsearch service
 ```
 sudo service elasticsearch start
 ```
 
-## Check the status of elasticsearch service
+### Check the status of elasticsearch service
 ```
 sudo service elasticsearch status
 ```
+
+```
+# See the PID of elasticsearch and what are the open ports
+sudo lsof -i | grep elasticsearch
+
+java      2782   elasticsearch  172u  IPv6  37504      0t0  TCP ip6-localhost:9300 (LISTEN)
+java      2782   elasticsearch  173u  IPv6  37511      0t0  TCP localhost:9300 (LISTEN)
+java      2782   elasticsearch  181u  IPv6  37549      0t0  TCP ip6-localhost:9200 (LISTEN)
+java      2782   elasticsearch  182u  IPv6  37550      0t0  TCP localhost:9200 (LISTEN)
+```
+
+```
+sudo netstat -laputen
+
+Connexions Internet actives (serveurs et établies)
+Proto Recv-Q Send-Q Adresse locale          Adresse distante        Etat       Utilisatr  Inode      PID/Program name    
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      101        15838      309/systemd-resolve 
+tcp        0      0 127.0.0.1:631           0.0.0.0:*               LISTEN      0          18840      564/cupsd           
+tcp        0      0 10.0.2.15:58236         192.30.253.124:443      ESTABLISHED 1000       71926      2150/firefox        
+tcp        0      0 10.0.2.15:34036         66.102.1.189:443        ESTABLISHED 1000       71565      2150/firefox        
+tcp        0      0 10.0.2.15:46832         216.58.201.234:443      ESTABLISHED 1000       75709      2150/firefox        
+tcp        0      0 10.0.2.15:40426         216.58.201.238:443      ESTABLISHED 1000       73698      2150/firefox        
+tcp6       0      0 127.0.0.1:9200          :::*                    LISTEN      121        37550      2782/java           
+tcp6       0      0 ::1:9200                :::*                    LISTEN      121        37549      2782/java           
+tcp6       0      0 127.0.0.1:9300          :::*                    LISTEN      121        37511      2782/java           
+tcp6       0      0 ::1:9300                :::*                    LISTEN      121        37504      2782/java           
+tcp6       0      0 ::1:631                 :::*                    LISTEN      0          18839      564/cupsd           
+udp    52992      0 0.0.0.0:5353            0.0.0.0:*                           115        18290      542/avahi-daemon: r 
+udp        0      0 0.0.0.0:39190           0.0.0.0:*                           115        18292      542/avahi-daemon: r 
+udp    29952      0 127.0.0.53:53           0.0.0.0:*                           101        15837      309/systemd-resolve 
+udp        0      0 0.0.0.0:68              0.0.0.0:*                           0          20263      744/dhclient        
+udp        0      0 0.0.0.0:631             0.0.0.0:*                           0          18854      573/cups-browsed    
+udp6       0      0 :::35663                :::*                                115        18293      542/avahi-daemon: r 
+udp6   34560      0 :::5353                 :::*                                115        18291      542/avahi-daemon: r
+```
+
 
 ### Check the elasticsearch service is well install
 - Open your browser
 - Go on the following URL
 
+- - - 
 
-# Chapter II: Configure your elasticsearch service
+Chapter II: Configure and install your elasticsearch service
+------------------------------------------------------------
 
-## Reminder
+### Reminder
 In Linux/Debian environments, the configuration files are in:
 `/etc/elasticsearch/`
 
@@ -223,6 +265,10 @@ curl -X GET http://localhost:9200/mysecondindex/_mappings
 {"mysecondindex":{"mappings":{"myfirsttype":{"properties":{"myfirstfield":{"type":"text"}}}}}}
 ```
 
+At last, you could need to update a mapping
+```
+curl -X PUT http://localhost:9200/mysecondindex/_mappings/myfirsttype
+```
 
 ## Make on the first index some aliases
 The official documentation for aliases https://www.elastic.co/guide/en/elasticsearch/reference/6.3/indices-aliases.html
@@ -323,6 +369,35 @@ curl -X GET "http://localhost:9200/mycommonalias/_mappings"
 
 ## Insert documents
 
+```
+curl -X PUT -H 'Content-Type: application/json' http://localhost:9200/shop_index/dvd_type/1 -d '
+{
+    "title": "The Godfather",
+    "director": "Francis Ford Coppola",
+    "year": 1972,
+    "genres": ["Crime", "Drama"]
+}
+'
+
+{"_index":"shop_index","_type":"dvd_type","_id":"1","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"_seq_no":0,"_primary_term":1}
+```
+
+As you can see, if you send a request with a no existing index and so with no type, elasticsearch will create them for adding the new document.
+
+Check what elasticsearch has done:
+1.0 The settings
+```
+curl -X GET http://localhost:9200/shop_index/_settings
+
+{"shop_index":{"settings":{"index":{"creation_date":"1531399579609","number_of_shards":"5","number_of_replicas":"1","uuid":"Jc6b4Zl_QAyWS_BTqyJeCw","version":{"created":"6030199"},"provided_name":"shop_index"}}}}
+# by default elasticsearch put 5 shards and 1 replica
+```
+2.0 The mappings
+```
+curl -X GET http://localhost:9200/shop_index/_mappings
+
+{"shop_index":{"mappings":{"dvd_type":{"properties":{"director":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"genres":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"title":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"year":{"type":"long"}}}}}}
+```
 
 
 # Chapter V: Appendices
