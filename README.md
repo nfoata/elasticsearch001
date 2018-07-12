@@ -110,19 +110,18 @@ In Linux/Debian environments, the configuration files are in:
 To know where are stored the log files and the data, you can open elasticsearch.yml.
 By default, these files are respectively in `/var/log/elasticsearch` and in `/var/lib/elasticsearch/`
 
-##
 The official documentation is available at https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html
 
-## Open the main configuration file elasticsearch.yml and fill in the following variables
+### Open the main configuration file elasticsearch.yml and fill in the following variables
 cluster.name: my-application
 node.name: node-1-dev
 
-## Restart the service
+### Restart the service
 ```
 sudo service elasticsearch restart
 ```
 
-## Test that the configuration has been taken in account
+### Test that the configuration has been taken in account
 ```
 curl -X GET http://localhost:9200
 
@@ -145,7 +144,7 @@ curl -X GET http://localhost:9200
 }
 ```
 
-## See the indices on elasticsearch
+### See the indices on elasticsearch
 ```
 curl -X GET http://localhost:9200/_cat/indices?v
 
@@ -155,9 +154,12 @@ health status index uuid pri rep docs.count docs.deleted store.size pri.store.si
 NB: This last line means there is no index within elasticsearch for now
 https://www.elastic.co/guide/en/elasticsearch/reference/current/_list_all_indices.html
 
-# Chapter III: Play with elasticsearch
+- - -
 
-## Introduction
+Chapter III: Use and play with elasticsearch
+--------------------------------------------
+
+### Introduction
 
 **Index**: An index can be seen as a database with its rules for the replication, shards ... 
 > e.g: a shop
@@ -175,7 +177,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/_list_all_indice
 **Document**: A document is another name for an item, a record within the database
 > e.g: The DVD untitled Blood Diamond with Leonardo DiCaprio as main actor and coming from USA
 
-## Make your first index
+### Make your first index
 
 The official documenation for the indices https://www.elastic.co/guide/en/elasticsearch/reference/6.3/indices-create-index.html
 
@@ -211,7 +213,7 @@ health status index        uuid                   pri rep docs.count docs.delete
 yellow open   myfirstindex QZj3F6eqQriKXS6tY2SIXg   5   1          0            0      1.2kb          1.2kb
 ```
 
-## Make a second index and specify the mapping
+### Make a second index and specify the mapping
 
 ```
 curl -X PUT -H 'Content-Type: application/json' http://localhost:9200/mysecondindex -d'
@@ -270,7 +272,7 @@ At last, you could need to update a mapping
 curl -X PUT http://localhost:9200/mysecondindex/_mappings/myfirsttype
 ```
 
-## Make on the first index some aliases
+### Make on the first index some aliases
 The official documentation for aliases https://www.elastic.co/guide/en/elasticsearch/reference/6.3/indices-aliases.html
 
 ```
@@ -367,7 +369,7 @@ curl -X GET "http://localhost:9200/mycommonalias/_mappings"
 {"myfirstindex":{"mappings":{}},"mysecondindex":{"mappings":{"myfirsttype":{"properties":{"myfirstfield":{"type":"text"}}}}}}
 ```
 
-## Insert documents
+### Insert documents
 
 ```
 curl -X PUT -H 'Content-Type: application/json' http://localhost:9200/shop_index/dvd_type/1 -d '
@@ -399,13 +401,15 @@ curl -X GET http://localhost:9200/shop_index/_mappings
 {"shop_index":{"mappings":{"dvd_type":{"properties":{"director":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"genres":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"title":{"type":"text","fields":{"keyword":{"type":"keyword","ignore_above":256}}},"year":{"type":"long"}}}}}}
 ```
 
+- - -
 
-# Chapter V: Appendices
+Chapter IV: Appendices
+----------------------
 
-## Markdown syntax
+### Markdown syntax
 The official format is available here: https://help.github.com/articles/basic-writing-and-formatting-syntax/
 
-## Listing of the links present within this page
+### Listing of the links present within this page
 
 - Official: https://www.elastic.co/fr/
 - Settings: https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html
