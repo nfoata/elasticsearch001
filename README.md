@@ -124,9 +124,14 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/_list_all_indice
 > e.g: the DVDs in a shop, the books in a shop
 
 **Alias**: An alias is another name of an index or can be also a pre configured filter accessible via this new name (a kind of another view)
-> e.g: The media which contains both DVDs and books 
+> e.g: The media which contains both DVDs and books
+ 
 >      The DVDs with Leonardo DiCaprio (pre configurerd filtering on DVDs)
+
 >      The DVDs of USA = DVDs of North America (same name for accessing the same data)
+
+**Document**: A document is another name for an item, a record within the database
+> e.g: The DVD untitled Blood Diamond with Leonardo DiCaprio as main actor and coming from USA
 
 ## Make your first index
 
@@ -255,7 +260,12 @@ curl -X GET http://localhost:9200/myfirstindex
 
 {"myfirstindex":{"aliases":{"myfirstalias":{}},"mappings":{},"settings":{"index":{"creation_date":"1531317424617","number_of_shards":"5","number_of_replicas":"1","uuid":"QZj3F6eqQriKXS6tY2SIXg","version":{"created":"6030199"},"provided_name":"myfirstindex"}}}}
 
+
+**versus**
+
+
 curl -X GET http://localhost:9200/myfirstalias
+
 {"myfirstindex":{"aliases":{"myfirstalias":{}},"mappings":{},"settings":{"index":{"creation_date":"1531317424617","number_of_shards":"5","number_of_replicas":"1","uuid":"QZj3F6eqQriKXS6tY2SIXg","version":{"created":"6030199"},"provided_name":"myfirstindex"}}}}
 ```
 
@@ -292,7 +302,26 @@ curl -X POST "localhost:9200/_aliases" -H 'Content-Type: application/json' -d'
 }
 '
 
+After having put the `mycommonalias`, we can check that we have well the information for both of the indices
+```
+curl -X GET "http://localhost:9200/mycommonalias"
 
+{"mysecondindex":{"aliases":{"mycommonalias":{}},"mappings":{"myfirsttype":{"properties":{"myfirstfield":{"type":"text"}}}},"settings":{"index":{"creation_date":"1531386908605","number_of_shards":"3","number_of_replicas":"1","uuid":"fkyFaOYcRBmyBRMQ11vheQ","version":{"created":"6030199"},"provided_name":"mysecondindex"}}},"myfirstindex":{"aliases":{"mycommonalias":{},"myfirstalias":{}},"mappings":{},"settings":{"index":{"creation_date":"1531317424617","number_of_shards":"5","number_of_replicas":"1","uuid":"QZj3F6eqQriKXS6tY2SIXg","version":{"created":"6030199"},"provided_name":"myfirstindex"}}}}nfoata@nfoata-VirtualBox:~/euby/elasticsearch001$ curl -X GET "http://localhost:9200/mycommonalias/_settings
+```
+
+```
+curl -X GET "http://localhost:9200/mycommonalias/_settings"
+
+{"myfirstindex":{"settings":{"index":{"creation_date":"1531317424617","number_of_shards":"5","number_of_replicas":"1","uuid":"QZj3F6eqQriKXS6tY2SIXg","version":{"created":"6030199"},"provided_name":"myfirstindex"}}},"mysecondindex":{"settings":{"index":{"creation_date":"1531386908605","number_of_shards":"3","number_of_replicas":"1","uuid":"fkyFaOYcRBmyBRMQ11vheQ","version":{"created":"6030199"},"provided_name":"mysecondindex"}}}}
+```
+
+```
+curl -X GET "http://localhost:9200/mycommonalias/_mappings"
+
+{"myfirstindex":{"mappings":{}},"mysecondindex":{"mappings":{"myfirsttype":{"properties":{"myfirstfield":{"type":"text"}}}}}}
+```
+
+## Insert documents
 
 
 
@@ -300,4 +329,12 @@ curl -X POST "localhost:9200/_aliases" -H 'Content-Type: application/json' -d'
 
 ## Markdown syntax
 The official format is available here: https://help.github.com/articles/basic-writing-and-formatting-syntax/
+
+## Listing of the links present within this page
+
+- Official: https://www.elastic.co/fr/
+- Settings: https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html
+- Indices:  https://www.elastic.co/guide/en/elasticsearch/reference/current/_list_all_indices.html
+            https://www.elastic.co/guide/en/elasticsearch/reference/6.3/indices-create-index.html
+- Aliases:  https://www.elastic.co/guide/en/elasticsearch/reference/6.3/indices-aliases.html
 
