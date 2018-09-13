@@ -18,7 +18,7 @@ A french website for the installation https://doc.ubuntu-fr.org/elasticsearch
 
 ### Optional: Install some tools for working with elasticsearch
 ```
-\# For having the netstat comand and see the open ports on your server
+\# For having the netstat command and see the open ports on your server
 sudo apt-get install net-tools
 
 \# For having cURL and make manual http request 
